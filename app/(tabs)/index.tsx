@@ -1,98 +1,218 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { useColorScheme } from '@/hooks/use-color-scheme';
+import { Colors, Spacing, FontSize, FontWeight, BorderRadius } from '@/constants/theme';
+import { mockChats, mockStudents, currentUserId } from '@/data/mockData';
+import { Chat, Student } from '@/data/mockData';
+import FloatingActionButton from '@/components/ui/floating-action-button';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+export default function ChatsScreen() {
+  const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  const [searchQuery, setSearchQuery] = useState('');
 
-export default function HomeScreen() {
+  const getStudentName = (participants: string[]) => {
+    const otherParticipant = participants.find(id => id !== currentUserId);
+    const student = mockStudents.find(s => s.id === otherParticipant);
+    return student?.name || 'Unknown';
+  };
+
+  const getStudentAvatar = (participants: string[]) => {
+    const otherParticipant = participants.find(id => id !== currentUserId);
+    const student = mockStudents.find(s => s.id === otherParticipant);
+    return student?.name.split(' ').map(n => n[0]).join('') || '?';
+  };
+
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+    
+    if (diffInHours < 24) {
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInHours < 168) { // 7 days
+      return date.toLocaleDateString([], { weekday: 'short' });
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  };
+
+  const filteredChats = mockChats.filter(chat => 
+    chat.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const renderChatItem = ({ item }: { item: Chat }) => (
+    <TouchableOpacity 
+      style={[styles.chatItem, { borderBottomColor: colors.border }]}
+      onPress={() => {
+        if (item.isGroup) {
+          // Navigate to group chat
+          router.push(`/group-chat/${item.id}`);
+        } else {
+          // Navigate to direct chat
+          const otherParticipant = item.participants.find(id => id !== currentUserId);
+          router.push(`/chat/${otherParticipant}`);
+        }
+      }}
+    >
+      <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
+        <Text style={[styles.avatarText, { color: colors.secondary }]}>
+          {item.isGroup ? 'G' : getStudentAvatar(item.participants)}
+        </Text>
+      </View>
+      <View style={styles.chatContent}>
+        <View style={styles.chatHeader}>
+          <Text style={[styles.chatName, { color: colors.text }]}>{item.name}</Text>
+          {item.lastMessage && (
+            <Text style={[styles.chatTime, { color: colors.textSecondary }]}>
+              {formatTime(item.lastMessage.timestamp)}
+            </Text>
+          )}
+        </View>
+        <View style={styles.chatPreview}>
+          <Text 
+            style={[
+              styles.lastMessage, 
+              { color: colors.textSecondary },
+              !item.lastMessage?.isRead && { color: colors.text, fontWeight: FontWeight.medium }
+            ]}
+            numberOfLines={1}
+          >
+            {item.lastMessage?.content || 'No messages yet'}
+          </Text>
+          {item.unreadCount > 0 && (
+            <View style={[styles.unreadBadge, { backgroundColor: colors.primary }]}>
+              <Text style={[styles.unreadText, { color: colors.secondary }]}>
+                {item.unreadCount}
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { borderBottomColor: colors.border }]}>
+        <Text style={[styles.title, { color: colors.text }]}>Lynk</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>College Chat</Text>
+      </View>
+      
+      <View style={[styles.searchContainer, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <TextInput
+          style={[styles.searchInput, { color: colors.text }]}
+          placeholder="Search chats..."
+          placeholderTextColor={colors.textSecondary}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+      </View>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      <FlatList
+        data={filteredChats}
+        renderItem={renderChatItem}
+        keyExtractor={(item) => item.id}
+        style={styles.chatList}
+        showsVerticalScrollIndicator={false}
+      />
+      
+      <FloatingActionButton
+        onPress={() => router.push('/(tabs)/explore')}
+        icon="+"
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+  },
+  header: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+  },
+  title: {
+    fontSize: FontSize.xxxl,
+    fontWeight: FontWeight.bold,
+  },
+  subtitle: {
+    fontSize: FontSize.md,
+    marginTop: Spacing.xs,
+  },
+  searchContainer: {
+    margin: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
+  searchInput: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    fontSize: FontSize.md,
+  },
+  chatList: {
+    flex: 1,
+  },
+  chatItem: {
     flexDirection: 'row',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+  },
+  avatar: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    marginRight: Spacing.md,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  avatarText: {
+    fontSize: FontSize.lg,
+    fontWeight: FontWeight.bold,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  chatContent: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  chatHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  chatName: {
+    fontSize: FontSize.md,
+    fontWeight: FontWeight.semibold,
+    flex: 1,
+  },
+  chatTime: {
+    fontSize: FontSize.sm,
+  },
+  chatPreview: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  lastMessage: {
+    fontSize: FontSize.sm,
+    flex: 1,
+  },
+  unreadBadge: {
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: Spacing.sm,
+  },
+  unreadText: {
+    fontSize: FontSize.xs,
+    fontWeight: FontWeight.bold,
   },
 });
