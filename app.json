@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "lynk",
-    "slug": "lynk",
+    "name": "CollegeChat",
+    "slug": "college-chat",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
