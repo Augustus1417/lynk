@@ -29,7 +29,6 @@ export default function HomeScreen() {
           <MaterialCommunityIcons name="chat-processing" size={60} color="#fff" />
         </View>
         <Text style={styles.title}>Lynk</Text>
-        <Text style={styles.subtitle}>Chats</Text>
       </View>
 
       <View style={styles.listContainer}>
@@ -69,16 +68,16 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   headerContainer: {
     alignItems: 'center',
-    paddingVertical: 50,
+    paddingVertical: 30, 
   },
   iconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 80, 
+    height: 80,
+    borderRadius: 40,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 15,
+    marginBottom: 10, 
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -86,15 +85,16 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   title: {
-    fontSize: 42,
+    fontSize: 36, 
     fontWeight: '800',
     color: '#fff',
     letterSpacing: 1,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    marginBottom: 4, 
   },
-  subtitle: { fontSize: 16, color: '#fff', opacity: 0.9 },
+  subtitle: { fontSize: 14, color: '#fff', opacity: 0.9, marginBottom: 8 },
   listContainer: {
     flex: 1,
     backgroundColor: '#fff',

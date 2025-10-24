@@ -11,7 +11,7 @@ interface User {
 }
 
 export default function ProfileScreen() {
-  // Mock user data
+  
   const user: User = {
     name: 'Jed Cruz',
     email: '2023-2-03175@lpunetwork.edu.ph',
