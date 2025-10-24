@@ -1,0 +1,7 @@
+[
+  { "id": 1, "name": "Abegail Ete", "program": "Computer Science", "section": "CS-302" },
+  { "id": 2, "name": "Jed Cruz", "program": "Computer Science", "section": "CS-302" },
+  { "id": 3, "name": "Joshua John Alix", "program": "Information Technology", "section": "IT-301" },
+  { "id": 4, "name": "Shan Carino", "program": "Information Technology", "section": "IT-302" },
+  { "id": 5, "name": "Erron Salonga", "program": "Computer Science", "section": "CS-302" }
+]

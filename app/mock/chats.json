@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "type": "group",
+    "name": "CS-302",
+    "members": 24,
+    "online": 3,
+    "messages": [
+      { "id": 1, "sender": "Erron", "text": "May gagawin ba kay sir Sean?" },
+      { "id": 2, "sender": "Abegail", "text": "yung game" },
+      { "id": 3, "sender": "You", "text": "hehe exempted kami dyan" }
+    ]
+  },
+  {
+    "id": 2,
+    "type": "dm",
+    "name": "Erron",
+    "members": 2,
+    "online": 1,
+    "messages": [
+      { "id": 1, "sender": "Erron", "text": "kamusta progress sa soft eng?" },
+      { "id": 2, "sender": "You", "text": "ays lang kuys" },
+      { "id": 3, "sender": "Erron", "text": "chat ka if may need, d naman ako busy" }
+    ]
+  } ,
+  {
+    "id": 3,
+    "type": "dm",
+    "name": "Nathan",
+    "members": 2,
+    "online": 1,
+    "messages": [
+      { "id": 1, "sender": "Nathan", "text": "tawag daw tayo ni Ma'am Peren" },
+      { "id": 2, "sender": "You", "text": "ikaw nalang pls" },
+      { "id": 3, "sender": "Nathan", "text": "sige ako nalang dahil mabait akong student" },
+      { "id": 4, "sender": "You", "text": "thank you!" }
+    ]
+  },
+  {
+    "id": 4,
+    "type": "dm",
+    "name": "Aaron",
+    "members": 2,
+    "online": 1,
+    "messages": [
+      { "id": 1, "sender": "Aaron", "text": "kamusta yung chat app" },
+      { "id": 2, "sender": "You", "text": "meron na mock-up ng frontend" },
+      { "id": 3, "sender": "Aaron", "text": "nice, send mo sakin repo para masimulan ko na parts ko" },
+      { "id": 4, "sender": "You", "text": "sige sige" }
+    ]
+  }
+]
