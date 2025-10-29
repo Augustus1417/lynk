@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "358680700935",
+    "project_id": "lynk-d753e",
+    "storage_bucket": "lynk-d753e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358680700935:android:53f4d26c942740373b22a2",
+        "android_client_info": {
+          "package_name": "com.cs302.lynk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCS1cfRZgfHGBMsicOkFXslaMvR1qo_yTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
