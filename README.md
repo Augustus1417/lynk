@@ -1,50 +1,48 @@
-# Welcome to your Expo app 👋
+# Lynk Chat App (In Development)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Lynk is a React Native chat application built with **Firebase** (Firestore) for real-time messaging. This project is under active development and intended for internal use by developers.
 
-## Get started
+## Project Structure
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+app
+├── components          # Reusable UI components (ChatBubble, InputBox, UserListItem)
+├── contexts            # Context providers (AuthContext)
+├── navigation          # React Navigation stack
+├── screens             # All app screens
+│   ├── Auth
+│   ├── Chats
+│   ├── Profile
+│   ├── Search
+│   └── Splash
+├── services            # Firebase services (authService, chatService, userService)
+└── types               # TypeScript type definitions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Getting Started
 
-## Learn more
+1. Clone the repository:
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+git clone https://github.com/Augustus1417/lynk.git
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2. Install dependencies:
 
-## Join the community
+```bash
+npm install
+```
 
-Join our community of developers creating universal apps.
+3. Run the app:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npx expo start
+```
+
+## Notes for Developers
+
+* Configure .env first before testing
+* Messages store **senderId**; display names are fetched from Firestore.
+* Navigation is typed with TypeScript; update `RootStackParamList` when adding new screens.
+* Keyboard and SafeArea are handled with `KeyboardAvoidingView` and `SafeAreaView`.
+* This app is **not production-ready**; features are still under development.
