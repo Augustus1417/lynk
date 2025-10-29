@@ -1,24 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { addDoc, collection, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ChatBubble from "../../components/ChatBubble";
 import InputBox from "../../components/InputBox";
 import { useAuth } from "../../contexts/AuthContext";
-import { RootStackParamList } from "../../navigation/RootNavigator";
-import { db } from "../../services/firebase";
+import { addMessage, getChatById, subscribeToMessages } from "../../services/chatService";
+import { getUserById } from "../../services/userService";
 import { Message } from "../../types/message";
-import { User } from "../../types/user";
 
-type ChatRoomRouteProp = RouteProp<RootStackParamList, "ChatRoom">;
-type ChatRoomNavigationProp = NativeStackNavigationProp<RootStackParamList, "ChatRoom">;
-
-export default function ChatRoom() {
-  const route = useRoute<ChatRoomRouteProp>();
-  const navigation = useNavigation<ChatRoomNavigationProp>();
+export default function ChatRoom({ route, navigation }: any) {
   const { chatId, chatName } = route.params;
   const { user } = useAuth();
 
@@ -26,45 +17,36 @@ export default function ChatRoom() {
   const [newMessage, setNewMessage] = useState("");
   const [usersMap, setUsersMap] = useState<Record<string, string>>({});
 
+  // Fetch chat members and map UID -> Name
   useEffect(() => {
-    const fetchUsers = async () => {
-      const chatDoc = await getDoc(doc(db, "chats", chatId));
-      if (!chatDoc.exists()) return;
+    const fetchMembers = async () => {
+      const chat = await getChatById(chatId);
+      if (!chat) return;
 
-      const members: string[] = chatDoc.data()?.members || [];
       const map: Record<string, string> = {};
-      await Promise.all(
-        members.map(async (uid) => {
-          const userDoc = await getDoc(doc(db, "users", uid));
-          if (userDoc.exists()) {
-            const u = userDoc.data() as User;
-            map[uid] = u.firstName + " " + u.lastName;
-          }
-        })
-      );
+      for (const uid of chat.members) {
+        const u = await getUserById(uid);
+        if (u) map[uid] = `${u.firstName} ${u.lastName}`;
+      }
       setUsersMap(map);
     };
-    fetchUsers();
+    fetchMembers();
   }, [chatId]);
 
+  // Subscribe to messages
   useEffect(() => {
-    if (!chatId) return;
-
-    const q = query(collection(db, "chats", chatId, "messages"), orderBy("createdAt", "asc"));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const msgs: Message[] = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Message));
-      setMessages(msgs);
-    });
+    const unsubscribe = subscribeToMessages(chatId, setMessages);
     return () => unsubscribe();
   }, [chatId]);
 
   const handleSend = async () => {
     if (!newMessage.trim() || !user) return;
-    await addDoc(collection(db, "chats", chatId, "messages"), {
+
+    await addMessage(chatId, {
       text: newMessage.trim(),
       senderId: user.uid,
-      createdAt: serverTimestamp(),
     });
+
     setNewMessage("");
   };
 
@@ -91,7 +73,11 @@ export default function ChatRoom() {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ChatBubble message={item} isMe={item.senderId === user?.uid} senderName={usersMap[item.senderId] || "Unknown"} />
+            <ChatBubble
+              message={item}
+              isMe={item.senderId === user?.uid}
+              senderName={usersMap[item.senderId] || "Unknown"}
+            />
           )}
           contentContainerStyle={{ padding: 12, paddingBottom: 12 }}
           style={styles.messagesList}
