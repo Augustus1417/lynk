@@ -18,4 +18,17 @@ export interface User {
   hideNameFromSearch: boolean;
   userType: "student" | "faculty";
   profilePicture?: string;
+
+  // FRIENDSHIP
+  friends?: string[]; // array of user IDs who are accepted friends
+  friendRequestsReceived?: FriendRequest[]; // optional: incoming requests
+  friendRequestsSent?: FriendRequest[]; // optional: outgoing requests
+}
+
+export interface FriendRequest {
+  id: string;          // request doc ID
+  from: string;        // sender user ID
+  to: string;          // receiver user ID
+  status: "pending" | "accepted" | "declined";
+  createdAt: any;      // Firestore timestamp
 }

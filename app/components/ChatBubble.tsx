@@ -2,29 +2,37 @@ import moment from "moment";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Message } from "../types/message";
+import ProfileAvatar from "./ProfileAvatar";
 
 interface ChatBubbleProps {
   message: Message;
   isMe: boolean;
   senderName?: string;
+  avatarUrl?: string;
 }
 
-export default function ChatBubble({ message, isMe, senderName }: ChatBubbleProps) {
+export default function ChatBubble({ message, isMe, senderName, avatarUrl }: ChatBubbleProps) {
   const time = message.createdAt?.toDate ? message.createdAt.toDate() : new Date();
   const formattedTime = moment(time).format("h:mm A");
 
   return (
-    <View style={[styles.container, isMe ? styles.me : styles.other]}>
-      {!isMe && senderName && (
-        <Text style={styles.senderName}>{senderName}</Text>
+    <View style={[styles.row, isMe ? { justifyContent: "flex-end" } : { justifyContent: "flex-start" }]}>
+      {!isMe && (
+        <ProfileAvatar uri={avatarUrl} size={28} name={senderName} />
       )}
-      <Text style={styles.text}>{message.text}</Text>
-      <Text style={styles.time}>{formattedTime}</Text>
+      <View style={[styles.container, isMe ? styles.me : styles.other]}>
+        {!isMe && senderName && (
+          <Text style={styles.senderName}>{senderName}</Text>
+        )}
+        <Text style={styles.text}>{message.text}</Text>
+        <Text style={styles.time}>{formattedTime}</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  row: { flexDirection: "row", alignItems: "flex-end", gap: 8 },
   container: {
     maxWidth: "70%",
     padding: 10,
